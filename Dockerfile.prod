@@ -1,0 +1,12 @@
+FROM node:16.14.2-alpine3.15 as build
+
+WORKDIR /app
+COPY package.json yarn.lock ./
+RUN yarn install --production
+COPY . .
+RUN yarn global add @nestjs/cli
+RUN yarn build
+
+FROM node:16.14.2-alpine3.15
+COPY --from=build /app/dist /app
+CMD ["yarn", "start"]
